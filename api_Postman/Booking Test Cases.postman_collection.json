@@ -1,0 +1,1893 @@
+{
+	"info": {
+		"_postman_id": "26b33d14-bb6d-483a-9d10-23f23c0f69f0",
+		"name": "Booking Test Cases",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28670749"
+	},
+	"item": [
+		{
+			"name": "TestCase : Auth",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const schema = {\r",
+							"    \"type\": \"object\",\r",
+							"    \"properties\": {\r",
+							"        \"token\": { \"type\": \"string\" }\r",
+							"    },\r",
+							"    \"required\": [\"token\"]\r",
+							"};\r",
+							"pm.test(\"Validation of response Schema\", () => {\r",
+							"    pm.response.to.have.jsonSchema(schema);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validation of Status Code\", () => {\r",
+							"    pm.expect(pm.response.code).to.eql(200);\r",
+							"});\r",
+							"\r",
+							"///Store token for other steps\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"pm.collectionVariables.set(\"token\", jsonData.token);\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"content-type": true
+				}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\" : \"{{username}}\",\r\n    \"password\"  : \"{{password}}\"\r\n}"
+				},
+				"url": {
+					"raw": "{{bookingUrl}}/auth",
+					"host": [
+						"{{bookingUrl}}"
+					],
+					"path": [
+						"auth"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "TestCase : PostBooking",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var schema = {\r",
+							"  \"type\": \"object\",\r",
+							"\"properties\" : {\r",
+							"    \"bookingid\" : \"integer\",\r",
+							"    \"booking\" : {\r",
+							"        \"type\" : \"object\",\r",
+							"       \"properties\" : {\r",
+							"           \"firstname\" : {\"type\" : \"string\"},\r",
+							"           \"lastname\" : {\"type\" : \"string\"},\r",
+							"           \"totalprice\" : {\"type\" : \"integer\"},\r",
+							"           \"depositpaid\" : {\"type\" : \"boolean\"},\r",
+							"           \"bookingdates\" : {\"type\" : \"object\", \r",
+							"           \"properties\" : {\r",
+							"               \"checkin\" : {\"type\": \"string\", \"format\": \"date\"},\r",
+							"               \"checkout\" : {\"type\": \"string\", \"format\": \"date\"}\r",
+							"           }},\r",
+							"           \"additionalneeds\" : {\"type\" : \"string\"}\r",
+							"       }\r",
+							"    }\r",
+							"}\r",
+							"  };\r",
+							"\r",
+							"pm.test(\"Validation of response Schema\", () => {\r",
+							"    pm.response.to.have.jsonSchema(schema);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validation of Status Code\", () => {\r",
+							"    pm.expect(pm.response.code).to.eql(200);\r",
+							"});\r",
+							"\r",
+							"var expectedJson = {\r",
+							"    \"booking\": {\r",
+							"        \"firstname\": \"Yusuf\",\r",
+							"        \"lastname\": \"Dudaklı\",\r",
+							"        \"totalprice\": 100,\r",
+							"        \"depositpaid\": true,\r",
+							"        \"bookingdates\": {\r",
+							"            \"checkin\": \"2024-01-01\",\r",
+							"            \"checkout\": \"2025-01-01\"\r",
+							"        },\r",
+							"        \"additionalneeds\": \"No Need\"\r",
+							"    }\r",
+							"};\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"pm.test(\"Validation of Response Body\", () => {\r",
+							"    pm.expect(jsonData.booking).to.eql(expectedJson.booking);\r",
+							"});\r",
+							"pm.test(\"Validation of Response Body\", () => {\r",
+							"    pm.expect(jsonData.additionalneeds).to.eql(expectedJson.additionalneeds);\r",
+							"});\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"pm.collectionVariables.set(\"tempbookid\", jsonData.bookingid);\r",
+							"console.log(\"Id with \" + pm.collectionVariables.get(\"tempbookid\")+\" is saved to use other tests\")\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"firstname\" : \"Yusuf\",\r\n    \"lastname\" : \"Dudaklı\", \r\n    \"totalprice\" : 100,\r\n    \"depositpaid\" : true,\r\n    \"bookingdates\" : {\r\n        \"checkin\" : \"2024-01-01\",\r\n        \"checkout\" : \"2025-01-01\"\r\n    },\r\n    \"additionalneeds\" : \"No Need\"    \r\n}"
+				},
+				"url": {
+					"raw": "{{bookingUrl}}/booking",
+					"host": [
+						"{{bookingUrl}}"
+					],
+					"path": [
+						"booking"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "TestCase : PutBooking",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var schema = {\r",
+							"  \"type\": \"object\",\r",
+							"\"properties\" : {     \r",
+							"           \"firstname\" : {\"type\" : \"string\"},\r",
+							"           \"lastname\" : {\"type\" : \"string\"},\r",
+							"           \"totalprice\" : {\"type\" : \"integer\"},\r",
+							"           \"depositpaid\" : {\"type\" : \"boolean\"},\r",
+							"           \"bookingdates\" : {\"type\" : \"object\", \r",
+							"           \"properties\" : {\r",
+							"               \"checkin\" : {\"type\": \"string\", \"format\": \"date\"},\r",
+							"               \"checkout\" : {\"type\": \"string\", \"format\": \"date\"}\r",
+							"           }},\r",
+							"           \"additionalneeds\" : {\"type\" : \"string\"}\r",
+							"       \r",
+							"    \r",
+							"}\r",
+							"  };\r",
+							"\r",
+							"pm.test(\"Validation of response Schema\", () => {\r",
+							"    pm.response.to.have.jsonSchema(schema);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validation of Status Code\", () => {\r",
+							"    pm.expect(pm.response.code).to.eql(200);\r",
+							"});\r",
+							"\r",
+							"var expectedJson = {\r",
+							"     \"firstname\": \"YusufUpdated1\",\r",
+							"    \"lastname\": \"DudaklıUpdated\",\r",
+							"    \"totalprice\": 112,\r",
+							"    \"depositpaid\": true,\r",
+							"    \"bookingdates\": {\r",
+							"        \"checkin\": \"2099-02-02\",\r",
+							"        \"checkout\": \"2100-03-04\"\r",
+							"    },\r",
+							"    \"additionalneeds\": \"No Need\"   \r",
+							"};\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"pm.test(\"Validation of Response Body\", () => {\r",
+							"    pm.expect(jsonData).to.eql(expectedJson);\r",
+							"\r",
+							"});\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"pm.collectionVariables.set(\"firstname\", jsonData.firstname);\r",
+							"pm.collectionVariables.set(\"lastname\", jsonData.lastname);\r",
+							"\r",
+							"\r",
+							"console.log(\"firstname, lastname values are stored for future tests.\")\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept-encoding": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Cookie",
+						"value": "token={{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n     \"firstname\": \"YusufUpdated1\",\r\n    \"lastname\": \"DudaklıUpdated\",\r\n    \"totalprice\": 112,\r\n    \"depositpaid\": true,\r\n    \"bookingdates\": {\r\n        \"checkin\": \"2099-02-02\",\r\n        \"checkout\": \"2100-03-04\"\r\n    },\r\n    \"additionalneeds\": \"No Need\"   \r\n}"
+				},
+				"url": {
+					"raw": "{{bookingUrl}}/booking/{{tempbookid}}",
+					"host": [
+						"{{bookingUrl}}"
+					],
+					"path": [
+						"booking",
+						"{{tempbookid}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "TestCase : PutBooking Basic Auth",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var schema = {\r",
+							"  \"type\": \"object\",\r",
+							"\"properties\" : {     \r",
+							"           \"firstname\" : {\"type\" : \"string\"},\r",
+							"           \"lastname\" : {\"type\" : \"string\"},\r",
+							"           \"totalprice\" : {\"type\" : \"integer\"},\r",
+							"           \"depositpaid\" : {\"type\" : \"boolean\"},\r",
+							"           \"bookingdates\" : {\"type\" : \"object\", \r",
+							"           \"properties\" : {\r",
+							"               \"checkin\" : {\"type\": \"string\", \"format\": \"date\"},\r",
+							"               \"checkout\" : {\"type\": \"string\", \"format\": \"date\"}\r",
+							"           }},\r",
+							"           \"additionalneeds\" : {\"type\" : \"string\"}\r",
+							"       \r",
+							"    \r",
+							"}\r",
+							"  };\r",
+							"\r",
+							"pm.test(\"Validation of response Schema\", () => {\r",
+							"    pm.response.to.have.jsonSchema(schema);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validation of Status Code\", () => {\r",
+							"    pm.expect(pm.response.code).to.eql(200);\r",
+							"});\r",
+							"\r",
+							"var expectedJson = {\r",
+							"     \"firstname\": \"YusufUpdated1\",\r",
+							"    \"lastname\": \"DudaklıUpdated\",\r",
+							"    \"totalprice\": 112,\r",
+							"    \"depositpaid\": true,\r",
+							"    \"bookingdates\": {\r",
+							"        \"checkin\": \"2099-02-02\",\r",
+							"        \"checkout\": \"2099-03-04\"\r",
+							"    },\r",
+							"    \"additionalneeds\": \"No Need\"   \r",
+							"};\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"pm.test(\"Validation of Response Body\", () => {\r",
+							"    pm.expect(jsonData).to.eql(expectedJson);\r",
+							"\r",
+							"});\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"pm.collectionVariables.set(\"firstname\", jsonData.firstname);\r",
+							"pm.collectionVariables.set(\"lastname\", jsonData.lastname);\r",
+							"\r",
+							"\r",
+							"console.log(\"firstname, lastname values are stored for future tests.\")\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept-encoding": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46cGFzc3dvcmQxMjM=",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n     \"firstname\": \"YusufUpdated1\",\r\n    \"lastname\": \"DudaklıUpdated\",\r\n    \"totalprice\": 112,\r\n    \"depositpaid\": true,\r\n    \"bookingdates\": {\r\n        \"checkin\": \"2099-02-02\",\r\n        \"checkout\": \"2099-03-04\"\r\n    },\r\n    \"additionalneeds\": \"No Need\"   \r\n}"
+				},
+				"url": {
+					"raw": "{{bookingUrl}}/booking/{{tempbookid}}",
+					"host": [
+						"{{bookingUrl}}"
+					],
+					"path": [
+						"booking",
+						"{{tempbookid}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "TestCase : GetBookingIds_NoParam",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var schema = {\r",
+							"  \"type\": \"array\",\r",
+							"  \"items\": {\r",
+							"    \"type\": \"object\",\r",
+							"    \"properties\": {\r",
+							"    \"bookingid\" : {\"type\" : \"integer\"}\r",
+							"    }\r",
+							"  }\r",
+							"  };\r",
+							"\r",
+							"pm.test(\"Validation of response Schema\", () => {\r",
+							"    pm.response.to.have.jsonSchema(schema);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validation of Status Code\", () => {\r",
+							"    pm.expect(pm.response.code).to.eql(200);\r",
+							"});\r",
+							"\r",
+							"var postedBookingFind = false;\r",
+							"var resp = pm.response.json();\r",
+							"var storedBookId = pm.collectionVariables.get(\"tempbookid\");\r",
+							"console.log(storedBookId + \" is searhing in response\");\r",
+							"for (var i=0; i<resp.length; i++)\r",
+							"{   \r",
+							"    if(resp[i].bookingid == storedBookId)\r",
+							"    {\r",
+							"        postedBookingFind = true;\r",
+							"        break;\r",
+							"    }\r",
+							"}\r",
+							"\r",
+							"pm.test(\"Validation of Booking List\", () => {\r",
+							"    pm.expect(postedBookingFind).to.eql(true);\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{bookingUrl}}/booking",
+					"host": [
+						"{{bookingUrl}}"
+					],
+					"path": [
+						"booking"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "TestCase : GetBookingIds_FirstName",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var schema = {\r",
+							"  \"type\": \"array\",\r",
+							"  \"items\": {\r",
+							"    \"type\": \"object\",\r",
+							"    \"properties\": {\r",
+							"    \"bookingid\" : {\"type\" : \"integer\"}\r",
+							"    }\r",
+							"  }\r",
+							"  };\r",
+							"\r",
+							"pm.test(\"Validation of response Schema\", () => {\r",
+							"    pm.response.to.have.jsonSchema(schema);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validation of Status Code\", () => {\r",
+							"    pm.expect(pm.response.code).to.eql(200);\r",
+							"});\r",
+							"\r",
+							"var postedBookingFind = false;\r",
+							"var resp = pm.response.json();\r",
+							"var storedBookId = pm.collectionVariables.get(\"tempbookid\");\r",
+							"pm.test(\"Validation of Booking List\", () => {\r",
+							"    pm.expect(resp[0].bookingid).to.eql(storedBookId);\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{bookingUrl}}/booking?firstname={{firstname}}",
+					"host": [
+						"{{bookingUrl}}"
+					],
+					"path": [
+						"booking"
+					],
+					"query": [
+						{
+							"key": "firstname",
+							"value": "{{firstname}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "TestCase : GetBookingIds_LastName",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var schema = {\r",
+							"  \"type\": \"array\",\r",
+							"  \"items\": {\r",
+							"    \"type\": \"object\",\r",
+							"    \"properties\": {\r",
+							"    \"bookingid\" : {\"type\" : \"integer\"}\r",
+							"    }\r",
+							"  }\r",
+							"  };\r",
+							"\r",
+							"pm.test(\"Validation of response Schema\", () => {\r",
+							"    pm.response.to.have.jsonSchema(schema);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validation of Status Code\", () => {\r",
+							"    pm.expect(pm.response.code).to.eql(200);\r",
+							"});\r",
+							"\r",
+							"var postedBookingFind = false;\r",
+							"var resp = pm.response.json();\r",
+							"var storedBookId = pm.collectionVariables.get(\"tempbookid\");\r",
+							"pm.test(\"Validation of Booking List\", () => {\r",
+							"    pm.expect(resp[0].bookingid).to.eql(storedBookId);\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{bookingUrl}}/booking?lastname={{lastname}}",
+					"host": [
+						"{{bookingUrl}}"
+					],
+					"path": [
+						"booking"
+					],
+					"query": [
+						{
+							"key": "lastname",
+							"value": "{{lastname}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "TestCase : GetBookingIds_CheckIn",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var schema = {\r",
+							"  \"type\": \"array\",\r",
+							"  \"items\": {\r",
+							"    \"type\": \"object\",\r",
+							"    \"properties\": {\r",
+							"    \"bookingid\" : {\"type\" : \"integer\"}\r",
+							"    }\r",
+							"  }\r",
+							"  };\r",
+							"\r",
+							"pm.test(\"Validation of response Schema\", () => {\r",
+							"    pm.response.to.have.jsonSchema(schema);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validation of Status Code\", () => {\r",
+							"    pm.expect(pm.response.code).to.eql(200);\r",
+							"});\r",
+							"\r",
+							"var postedBookingFind = false;\r",
+							"var resp = pm.response.json();\r",
+							"var storedBookId = pm.collectionVariables.get(\"tempbookid\");\r",
+							"pm.test(\"Validation of Booking List\", () => {\r",
+							"    pm.expect(resp[0].bookingid).to.eql(storedBookId);\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{bookingUrl}}/booking?checkin={{checkin}}",
+					"host": [
+						"{{bookingUrl}}"
+					],
+					"path": [
+						"booking"
+					],
+					"query": [
+						{
+							"key": "checkin",
+							"value": "{{checkin}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "TestCase : GetBookingIds_CheckOut",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var schema = {\r",
+							"  \"type\": \"array\",\r",
+							"  \"items\": {\r",
+							"    \"type\": \"object\",\r",
+							"    \"properties\": {\r",
+							"    \"bookingid\" : {\"type\" : \"integer\"}\r",
+							"    }\r",
+							"  }\r",
+							"  };\r",
+							"\r",
+							"pm.test(\"Validation of response Schema\", () => {\r",
+							"    pm.response.to.have.jsonSchema(schema);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validation of Status Code\", () => {\r",
+							"    pm.expect(pm.response.code).to.eql(200);\r",
+							"});\r",
+							"\r",
+							"var postedBookingFind = false;\r",
+							"var resp = pm.response.json();\r",
+							"var storedBookId = pm.collectionVariables.get(\"tempbookid\");\r",
+							"pm.test(\"Validation of Booking List\", () => {\r",
+							"    pm.expect(resp[0].bookingid).to.eql(storedBookId);\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{bookingUrl}}/booking?checkout={{checkout}}",
+					"host": [
+						"{{bookingUrl}}"
+					],
+					"path": [
+						"booking"
+					],
+					"query": [
+						{
+							"key": "checkout",
+							"value": "{{checkout}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "TestCase : GetBookingWithId",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var schema = {\r",
+							"  \"type\": \"object\",\r",
+							"\"properties\" : {     \r",
+							"           \"firstname\" : {\"type\" : \"string\"},\r",
+							"           \"lastname\" : {\"type\" : \"string\"},\r",
+							"           \"totalprice\" : {\"type\" : \"integer\"},\r",
+							"           \"depositpaid\" : {\"type\" : \"boolean\"},\r",
+							"           \"bookingdates\" : {\"type\" : \"object\", \r",
+							"           \"properties\" : {\r",
+							"               \"checkin\" : {\"type\": \"string\", \"format\": \"date\"},\r",
+							"               \"checkout\" : {\"type\": \"string\", \"format\": \"date\"}\r",
+							"           }},\r",
+							"           \"additionalneeds\" : {\"type\" : \"string\"}\r",
+							"       \r",
+							"    \r",
+							"}\r",
+							"  };\r",
+							"\r",
+							"pm.test(\"Validation of response Schema\", () => {\r",
+							"    pm.response.to.have.jsonSchema(schema);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validation of Status Code\", () => {\r",
+							"    pm.expect(pm.response.code).to.eql(200);\r",
+							"});\r",
+							"\r",
+							"var expectedJson = {\r",
+							"     \"firstname\": \"YusufUpdated1\",\r",
+							"    \"lastname\": \"DudaklıUpdated\",\r",
+							"    \"totalprice\": 112,\r",
+							"    \"depositpaid\": true,\r",
+							"    \"bookingdates\": {\r",
+							"        \"checkin\": \"2099-02-02\",\r",
+							"        \"checkout\": \"2099-03-04\"\r",
+							"    },\r",
+							"    \"additionalneeds\": \"No Need\"   \r",
+							"};\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"pm.test(\"Validation of Response Body\", () => {\r",
+							"    pm.expect(jsonData).to.eql(expectedJson);\r",
+							"\r",
+							"});\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Cookie",
+						"value": "token={{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{bookingUrl}}/booking/{{tempbookid}}",
+					"host": [
+						"{{bookingUrl}}"
+					],
+					"path": [
+						"booking",
+						"{{tempbookid}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "TestCase : PatchPartialUpdateBookingFirstName",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var schema = {\r",
+							"  \"type\": \"object\",\r",
+							"\"properties\" : {     \r",
+							"           \"firstname\" : {\"type\" : \"string\"},\r",
+							"           \"lastname\" : {\"type\" : \"string\"},\r",
+							"           \"totalprice\" : {\"type\" : \"integer\"},\r",
+							"           \"depositpaid\" : {\"type\" : \"boolean\"},\r",
+							"           \"bookingdates\" : {\"type\" : \"object\", \r",
+							"           \"properties\" : {\r",
+							"               \"checkin\" : {\"type\": \"string\", \"format\": \"date\"},\r",
+							"               \"checkout\" : {\"type\": \"string\", \"format\": \"date\"}\r",
+							"           }},\r",
+							"           \"additionalneeds\" : {\"type\" : \"string\"}\r",
+							"       \r",
+							"    \r",
+							"}\r",
+							"  };\r",
+							"\r",
+							"pm.test(\"Validation of response Schema\", () => {\r",
+							"    pm.response.to.have.jsonSchema(schema);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validation of Status Code\", () => {\r",
+							"    pm.expect(pm.response.code).to.eql(200);\r",
+							"});\r",
+							"\r",
+							"var expectedJson = {\r",
+							"     \"firstname\": \"YusufUpdated12\",\r",
+							"    \"lastname\": \"DudaklıUpdated\",\r",
+							"    \"totalprice\": 112,\r",
+							"    \"depositpaid\": true,\r",
+							"    \"bookingdates\": {\r",
+							"        \"checkin\": \"2099-02-02\",\r",
+							"        \"checkout\": \"2099-03-04\"\r",
+							"    },\r",
+							"    \"additionalneeds\": \"No Need\"   \r",
+							"};\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"pm.test(\"Validation of Response Body\", () => {\r",
+							"    pm.expect(jsonData).to.eql(expectedJson);\r",
+							"\r",
+							"});\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept-encoding": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Cookie",
+						"value": "token={{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n     \"firstname\": \"YusufUpdated12\"\r\n}"
+				},
+				"url": {
+					"raw": "{{bookingUrl}}/booking/{{tempbookid}}",
+					"host": [
+						"{{bookingUrl}}"
+					],
+					"path": [
+						"booking",
+						"{{tempbookid}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "TestCase : PatchPartialUpdateBookingLastName",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var schema = {\r",
+							"  \"type\": \"object\",\r",
+							"\"properties\" : {     \r",
+							"           \"firstname\" : {\"type\" : \"string\"},\r",
+							"           \"lastname\" : {\"type\" : \"string\"},\r",
+							"           \"totalprice\" : {\"type\" : \"integer\"},\r",
+							"           \"depositpaid\" : {\"type\" : \"boolean\"},\r",
+							"           \"bookingdates\" : {\"type\" : \"object\", \r",
+							"           \"properties\" : {\r",
+							"               \"checkin\" : {\"type\": \"string\", \"format\": \"date\"},\r",
+							"               \"checkout\" : {\"type\": \"string\", \"format\": \"date\"}\r",
+							"           }},\r",
+							"           \"additionalneeds\" : {\"type\" : \"string\"}\r",
+							"       \r",
+							"    \r",
+							"}\r",
+							"  };\r",
+							"\r",
+							"pm.test(\"Validation of response Schema\", () => {\r",
+							"    pm.response.to.have.jsonSchema(schema);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validation of Status Code\", () => {\r",
+							"    pm.expect(pm.response.code).to.eql(200);\r",
+							"});\r",
+							"\r",
+							"var expectedJson = {\r",
+							"     \"firstname\": \"YusufUpdated12\",\r",
+							"    \"lastname\": \"DudaklıUpdated12\",\r",
+							"    \"totalprice\": 112,\r",
+							"    \"depositpaid\": true,\r",
+							"    \"bookingdates\": {\r",
+							"        \"checkin\": \"2099-02-02\",\r",
+							"        \"checkout\": \"2099-03-04\"\r",
+							"    },\r",
+							"    \"additionalneeds\": \"No Need\"   \r",
+							"};\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"pm.test(\"Validation of Response Body\", () => {\r",
+							"    pm.expect(jsonData).to.eql(expectedJson);\r",
+							"\r",
+							"});\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept-encoding": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Cookie",
+						"value": "token={{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \r\n    \"lastname\": \"DudaklıUpdated12\"\r\n    \r\n}"
+				},
+				"url": {
+					"raw": "{{bookingUrl}}/booking/{{tempbookid}}",
+					"host": [
+						"{{bookingUrl}}"
+					],
+					"path": [
+						"booking",
+						"{{tempbookid}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "TestCase : PatchPartialUpdateBookingTotalPrice",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var schema = {\r",
+							"  \"type\": \"object\",\r",
+							"\"properties\" : {     \r",
+							"           \"firstname\" : {\"type\" : \"string\"},\r",
+							"           \"lastname\" : {\"type\" : \"string\"},\r",
+							"           \"totalprice\" : {\"type\" : \"integer\"},\r",
+							"           \"depositpaid\" : {\"type\" : \"boolean\"},\r",
+							"           \"bookingdates\" : {\"type\" : \"object\", \r",
+							"           \"properties\" : {\r",
+							"               \"checkin\" : {\"type\": \"string\", \"format\": \"date\"},\r",
+							"               \"checkout\" : {\"type\": \"string\", \"format\": \"date\"}\r",
+							"           }},\r",
+							"           \"additionalneeds\" : {\"type\" : \"string\"}\r",
+							"       \r",
+							"    \r",
+							"}\r",
+							"  };\r",
+							"\r",
+							"pm.test(\"Validation of response Schema\", () => {\r",
+							"    pm.response.to.have.jsonSchema(schema);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validation of Status Code\", () => {\r",
+							"    pm.expect(pm.response.code).to.eql(200);\r",
+							"});\r",
+							"\r",
+							"var expectedJson = {\r",
+							"     \"firstname\": \"YusufUpdated12\",\r",
+							"    \"lastname\": \"DudaklıUpdated12\",\r",
+							"    \"totalprice\": 11212,\r",
+							"    \"depositpaid\": true,\r",
+							"    \"bookingdates\": {\r",
+							"        \"checkin\": \"2099-02-02\",\r",
+							"        \"checkout\": \"2099-03-04\"\r",
+							"    },\r",
+							"    \"additionalneeds\": \"No Need\"   \r",
+							"};\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"pm.test(\"Validation of Response Body\", () => {\r",
+							"    pm.expect(jsonData).to.eql(expectedJson);\r",
+							"\r",
+							"});\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept-encoding": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Cookie",
+						"value": "token={{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\r\n    \"totalprice\": 11212   \r\n}"
+				},
+				"url": {
+					"raw": "{{bookingUrl}}/booking/{{tempbookid}}",
+					"host": [
+						"{{bookingUrl}}"
+					],
+					"path": [
+						"booking",
+						"{{tempbookid}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "TestCase : PatchPartialUpdateBookingDepositPaid",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var schema = {\r",
+							"  \"type\": \"object\",\r",
+							"\"properties\" : {     \r",
+							"           \"firstname\" : {\"type\" : \"string\"},\r",
+							"           \"lastname\" : {\"type\" : \"string\"},\r",
+							"           \"totalprice\" : {\"type\" : \"integer\"},\r",
+							"           \"depositpaid\" : {\"type\" : \"boolean\"},\r",
+							"           \"bookingdates\" : {\"type\" : \"object\", \r",
+							"           \"properties\" : {\r",
+							"               \"checkin\" : {\"type\": \"string\", \"format\": \"date\"},\r",
+							"               \"checkout\" : {\"type\": \"string\", \"format\": \"date\"}\r",
+							"           }},\r",
+							"           \"additionalneeds\" : {\"type\" : \"string\"}\r",
+							"       \r",
+							"    \r",
+							"}\r",
+							"  };\r",
+							"\r",
+							"pm.test(\"Validation of response Schema\", () => {\r",
+							"    pm.response.to.have.jsonSchema(schema);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validation of Status Code\", () => {\r",
+							"    pm.expect(pm.response.code).to.eql(200);\r",
+							"});\r",
+							"\r",
+							"var expectedJson = {\r",
+							"     \"firstname\": \"YusufUpdated12\",\r",
+							"    \"lastname\": \"DudaklıUpdated12\",\r",
+							"    \"totalprice\": 11212,\r",
+							"    \"depositpaid\": false,\r",
+							"    \"bookingdates\": {\r",
+							"        \"checkin\": \"2099-02-02\",\r",
+							"        \"checkout\": \"2099-03-04\"\r",
+							"    },\r",
+							"    \"additionalneeds\": \"No Need\"   \r",
+							"};\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"pm.test(\"Validation of Response Body\", () => {\r",
+							"    pm.expect(jsonData).to.eql(expectedJson);\r",
+							"\r",
+							"});\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept-encoding": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Cookie",
+						"value": "token={{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\r\n    \"depositpaid\": false\r\n     \r\n}"
+				},
+				"url": {
+					"raw": "{{bookingUrl}}/booking/{{tempbookid}}",
+					"host": [
+						"{{bookingUrl}}"
+					],
+					"path": [
+						"booking",
+						"{{tempbookid}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "TestCase : PatchPartialUpdateBookingCheckIn",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var schema = {\r",
+							"  \"type\": \"object\",\r",
+							"\"properties\" : {     \r",
+							"           \"firstname\" : {\"type\" : \"string\"},\r",
+							"           \"lastname\" : {\"type\" : \"string\"},\r",
+							"           \"totalprice\" : {\"type\" : \"integer\"},\r",
+							"           \"depositpaid\" : {\"type\" : \"boolean\"},\r",
+							"           \"bookingdates\" : {\"type\" : \"object\", \r",
+							"           \"properties\" : {\r",
+							"               \"checkin\" : {\"type\": \"string\", \"format\": \"date\"},\r",
+							"               \"checkout\" : {\"type\": \"string\", \"format\": \"date\"}\r",
+							"           }},\r",
+							"           \"additionalneeds\" : {\"type\" : \"string\"}\r",
+							"       \r",
+							"    \r",
+							"}\r",
+							"  };\r",
+							"\r",
+							"pm.test(\"Validation of response Schema\", () => {\r",
+							"    pm.response.to.have.jsonSchema(schema);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validation of Status Code\", () => {\r",
+							"    pm.expect(pm.response.code).to.eql(200);\r",
+							"});\r",
+							"\r",
+							"var expectedJson = {\r",
+							"     \"firstname\": \"YusufUpdated12\",\r",
+							"    \"lastname\": \"DudaklıUpdated12\",\r",
+							"    \"totalprice\": 11212,\r",
+							"    \"depositpaid\": false,\r",
+							"    \"bookingdates\": {\r",
+							"        \"checkin\": \"2099-02-12\",\r",
+							"        \"checkout\": \"2099-03-04\"\r",
+							"    },\r",
+							"    \"additionalneeds\": \"No Need\"   \r",
+							"};\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"pm.test(\"Validation of Response Body\", () => {\r",
+							"    pm.expect(jsonData).to.eql(expectedJson);\r",
+							"\r",
+							"});\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept-encoding": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Cookie",
+						"value": "token={{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"bookingdates\": {\r\n        \"checkin\": \"2099-02-12\"\r\n        \r\n    }\r\n}"
+				},
+				"url": {
+					"raw": "{{bookingUrl}}/booking/{{tempbookid}}",
+					"host": [
+						"{{bookingUrl}}"
+					],
+					"path": [
+						"booking",
+						"{{tempbookid}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "TestCase : PatchPartialUpdateBookingCheckOut",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var schema = {\r",
+							"  \"type\": \"object\",\r",
+							"\"properties\" : {     \r",
+							"           \"firstname\" : {\"type\" : \"string\"},\r",
+							"           \"lastname\" : {\"type\" : \"string\"},\r",
+							"           \"totalprice\" : {\"type\" : \"integer\"},\r",
+							"           \"depositpaid\" : {\"type\" : \"boolean\"},\r",
+							"           \"bookingdates\" : {\"type\" : \"object\", \r",
+							"           \"properties\" : {\r",
+							"               \"checkin\" : {\"type\": \"string\", \"format\": \"date\"},\r",
+							"               \"checkout\" : {\"type\": \"string\", \"format\": \"date\"}\r",
+							"           }},\r",
+							"           \"additionalneeds\" : {\"type\" : \"string\"}\r",
+							"       \r",
+							"    \r",
+							"}\r",
+							"  };\r",
+							"\r",
+							"pm.test(\"Validation of response Schema\", () => {\r",
+							"    pm.response.to.have.jsonSchema(schema);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validation of Status Code\", () => {\r",
+							"    pm.expect(pm.response.code).to.eql(200);\r",
+							"});\r",
+							"\r",
+							"var expectedJson = {\r",
+							"     \"firstname\": \"YusufUpdated12\",\r",
+							"    \"lastname\": \"DudaklıUpdated12\",\r",
+							"    \"totalprice\": 11212,\r",
+							"    \"depositpaid\": false,\r",
+							"    \"bookingdates\": {\r",
+							"        \"checkin\": \"2099-02-12\",\r",
+							"        \"checkout\": \"2099-03-12\"\r",
+							"    },\r",
+							"    \"additionalneeds\": \"No Need\"   \r",
+							"};\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"pm.test(\"Validation of Response Body\", () => {\r",
+							"    pm.expect(jsonData).to.eql(expectedJson);\r",
+							"\r",
+							"});\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept-encoding": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Cookie",
+						"value": "token={{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n     \r\n    \"bookingdates\": {      \r\n        \"checkout\": \"20100-03-12\"\r\n    }   \r\n}"
+				},
+				"url": {
+					"raw": "{{bookingUrl}}/booking/{{tempbookid}}",
+					"host": [
+						"{{bookingUrl}}"
+					],
+					"path": [
+						"booking",
+						"{{tempbookid}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "TestCase : PatchPartialUpdateBookingCheckInCheckOut",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var schema = {\r",
+							"  \"type\": \"object\",\r",
+							"\"properties\" : {     \r",
+							"           \"firstname\" : {\"type\" : \"string\"},\r",
+							"           \"lastname\" : {\"type\" : \"string\"},\r",
+							"           \"totalprice\" : {\"type\" : \"integer\"},\r",
+							"           \"depositpaid\" : {\"type\" : \"boolean\"},\r",
+							"           \"bookingdates\" : {\"type\" : \"object\", \r",
+							"           \"properties\" : {\r",
+							"               \"checkin\" : {\"type\": \"string\", \"format\": \"date\"},\r",
+							"               \"checkout\" : {\"type\": \"string\", \"format\": \"date\"}\r",
+							"           }},\r",
+							"           \"additionalneeds\" : {\"type\" : \"string\"}\r",
+							"       \r",
+							"    \r",
+							"}\r",
+							"  };\r",
+							"\r",
+							"pm.test(\"Validation of response Schema\", () => {\r",
+							"    pm.response.to.have.jsonSchema(schema);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validation of Status Code\", () => {\r",
+							"    pm.expect(pm.response.code).to.eql(200);\r",
+							"});\r",
+							"\r",
+							"var expectedJson = {\r",
+							"     \"firstname\": \"YusufUpdated12\",\r",
+							"    \"lastname\": \"DudaklıUpdated12\",\r",
+							"    \"totalprice\": 11212,\r",
+							"    \"depositpaid\": false,\r",
+							"    \"bookingdates\": {\r",
+							"        \"checkin\": \"2099-02-12\",\r",
+							"        \"checkout\": \"2099-03-12\"\r",
+							"    },\r",
+							"    \"additionalneeds\": \"No Need\"   \r",
+							"};\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"pm.test(\"Validation of Response Body\", () => {\r",
+							"    pm.expect(jsonData).to.eql(expectedJson);\r",
+							"\r",
+							"});\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept-encoding": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Cookie",
+						"value": "token={{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n     \r\n    \"bookingdates\": {  \r\n        \"checkin\": \"2099-02-12\",    \r\n        \"checkout\": \"2099-03-12\"\r\n    }   \r\n}"
+				},
+				"url": {
+					"raw": "{{bookingUrl}}/booking/{{tempbookid}}",
+					"host": [
+						"{{bookingUrl}}"
+					],
+					"path": [
+						"booking",
+						"{{tempbookid}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "TestCase : PatchPartialUpdateBookingAdditionalNeeds",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var schema = {\r",
+							"  \"type\": \"object\",\r",
+							"\"properties\" : {     \r",
+							"           \"firstname\" : {\"type\" : \"string\"},\r",
+							"           \"lastname\" : {\"type\" : \"string\"},\r",
+							"           \"totalprice\" : {\"type\" : \"integer\"},\r",
+							"           \"depositpaid\" : {\"type\" : \"boolean\"},\r",
+							"           \"bookingdates\" : {\"type\" : \"object\", \r",
+							"           \"properties\" : {\r",
+							"               \"checkin\" : {\"type\": \"string\", \"format\": \"date\"},\r",
+							"               \"checkout\" : {\"type\": \"string\", \"format\": \"date\"}\r",
+							"           }},\r",
+							"           \"additionalneeds\" : {\"type\" : \"string\"}\r",
+							"       \r",
+							"    \r",
+							"}\r",
+							"  };\r",
+							"\r",
+							"pm.test(\"Validation of response Schema\", () => {\r",
+							"    pm.response.to.have.jsonSchema(schema);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validation of Status Code\", () => {\r",
+							"    pm.expect(pm.response.code).to.eql(200);\r",
+							"});\r",
+							"\r",
+							"var expectedJson = {\r",
+							"     \"firstname\": \"YusufUpdated12\",\r",
+							"    \"lastname\": \"DudaklıUpdated12\",\r",
+							"    \"totalprice\": 11212,\r",
+							"    \"depositpaid\": false,\r",
+							"    \"bookingdates\": {\r",
+							"        \"checkin\": \"2099-02-12\",\r",
+							"        \"checkout\": \"2099-03-12\"\r",
+							"    },\r",
+							"    \"additionalneeds\": \"No Need12\"   \r",
+							"};\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"pm.test(\"Validation of Response Body\", () => {\r",
+							"    pm.expect(jsonData).to.eql(expectedJson);\r",
+							"\r",
+							"});\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept-encoding": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Cookie",
+						"value": "token={{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{   \r\n    \"additionalneeds\": \"No Need12\"   \r\n}"
+				},
+				"url": {
+					"raw": "{{bookingUrl}}/booking/{{tempbookid}}",
+					"host": [
+						"{{bookingUrl}}"
+					],
+					"path": [
+						"booking",
+						"{{tempbookid}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "TestCase : PatchPartialUpdateBookingUpdatedAll",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var schema = {\r",
+							"  \"type\": \"object\",\r",
+							"\"properties\" : {     \r",
+							"           \"firstname\" : {\"type\" : \"string\"},\r",
+							"           \"lastname\" : {\"type\" : \"string\"},\r",
+							"           \"totalprice\" : {\"type\" : \"integer\"},\r",
+							"           \"depositpaid\" : {\"type\" : \"boolean\"},\r",
+							"           \"bookingdates\" : {\"type\" : \"object\", \r",
+							"           \"properties\" : {\r",
+							"               \"checkin\" : {\"type\": \"string\", \"format\": \"date\"},\r",
+							"               \"checkout\" : {\"type\": \"string\", \"format\": \"date\"}\r",
+							"           }},\r",
+							"           \"additionalneeds\" : {\"type\" : \"string\"}\r",
+							"       \r",
+							"    \r",
+							"}\r",
+							"  };\r",
+							"\r",
+							"pm.test(\"Validation of response Schema\", () => {\r",
+							"    pm.response.to.have.jsonSchema(schema);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Validation of Status Code\", () => {\r",
+							"    pm.expect(pm.response.code).to.eql(200);\r",
+							"});\r",
+							"\r",
+							"var expectedJson = {\r",
+							"     \"firstname\": \"YusufUpdated1\",\r",
+							"    \"lastname\": \"DudaklıUpdated\",\r",
+							"    \"totalprice\": 112,\r",
+							"    \"depositpaid\": true,\r",
+							"    \"bookingdates\": {\r",
+							"        \"checkin\": \"2099-02-02\",\r",
+							"        \"checkout\": \"2099-03-04\"\r",
+							"    },\r",
+							"    \"additionalneeds\": \"No Need\"   \r",
+							"};\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"pm.test(\"Validation of Response Body\", () => {\r",
+							"    pm.expect(jsonData).to.eql(expectedJson);\r",
+							"\r",
+							"});\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"pm.collectionVariables.set(\"firstname\", jsonData.firstname);\r",
+							"pm.collectionVariables.set(\"lastname\", jsonData.lastname);\r",
+							"\r",
+							"\r",
+							"console.log(\"firstname, lastname values are stored for future tests.\")\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept-encoding": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Cookie",
+						"value": "token={{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n     \"firstname\": \"YusufUpdated1\",\r\n    \"lastname\": \"DudaklıUpdated\",\r\n    \"totalprice\": 112,\r\n    \"depositpaid\": true,\r\n    \"bookingdates\": {\r\n        \"checkin\": \"2099-02-02\",\r\n        \"checkout\": \"2099-03-04\"\r\n    },\r\n    \"additionalneeds\": \"No Need\"   \r\n}"
+				},
+				"url": {
+					"raw": "{{bookingUrl}}/booking/{{tempbookid}}",
+					"host": [
+						"{{bookingUrl}}"
+					],
+					"path": [
+						"booking",
+						"{{tempbookid}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Validation of Status Code\", () => {\r",
+							"    pm.expect(pm.response.code).to.eql(201);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "token={{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{bookingUrl}}/booking/{{tempbookid}}",
+					"host": [
+						"{{bookingUrl}}"
+					],
+					"path": [
+						"booking",
+						"{{tempbookid}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Ping",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Validation of Status Code\", () => {\r",
+							"    pm.expect(pm.response.code).to.eql(201);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{bookingUrl}}/ping",
+					"host": [
+						"{{bookingUrl}}"
+					],
+					"path": [
+						"ping"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "tempbookid",
+			"value": "0",
+			"type": "string"
+		},
+		{
+			"key": "username",
+			"value": "admin",
+			"type": "string"
+		},
+		{
+			"key": "password",
+			"value": "password123",
+			"type": "string"
+		},
+		{
+			"key": "bookingUrl",
+			"value": "https://restful-booker.herokuapp.com",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "firstname",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "lastname",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "checkin",
+			"value": "2079-03-02",
+			"type": "string"
+		},
+		{
+			"key": "checkout",
+			"value": "2069-02-02",
+			"type": "string"
+		},
+		{
+			"key": "updatedName",
+			"value": "akakceYdudakli",
+			"type": "string"
+		},
+		{
+			"key": "updatedLastName",
+			"value": "AkakceYdudakli",
+			"type": "string"
+		}
+	]
+}
